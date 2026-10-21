@@ -1,0 +1,8 @@
+{
+  "name": " i-s-Data-Solution2",
+  "description": "Imported from GitHub: diego305/i-s-Data-Solution",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
