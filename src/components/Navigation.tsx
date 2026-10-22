@@ -60,14 +60,14 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const menuItems: { id: NavModule; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
-      id: "form",
-      label: "Nueva Entrevista",
-      icon: <FileText className="w-4 h-4 text-[#3B8AC4]" />
-    },
-    {
       id: "proposal",
       label: "Propuesta de Trabajo",
       icon: <Briefcase className="w-4 h-4 text-[#BFA898]" />
+    },
+    {
+      id: "form",
+      label: "Primera Entrevista",
+      icon: <FileText className="w-4 h-4 text-[#3B8AC4]" />
     },
     {
       id: "admin",

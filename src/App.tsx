@@ -10,7 +10,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { Interview } from "./types";
 
 function MainApp() {
-  const [currentModule, setCurrentModule] = useState<NavModule>("form");
+  const [currentModule, setCurrentModule] = useState<NavModule>("proposal");
   const [interviews, setInterviews] = useState<Interview[]>([]);
 
   const loadLocalData = () => {

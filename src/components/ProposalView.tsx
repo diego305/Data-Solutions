@@ -3,10 +3,11 @@ import { Interview } from "../types";
 import { MATRIZ_EVALUACION } from "../config/constants";
 import { BrandBanner, ContrailCurves } from "./BrandHeader";
 import {
-  Download,
   ShieldCheck,
   MapPin,
-  CheckCircle2
+  Copy,
+  Check,
+  MessageSquare
 } from "lucide-react";
 
 interface ProposalViewProps {
@@ -18,62 +19,89 @@ export const ProposalView: React.FC<ProposalViewProps> = ({ interviews }) => {
   const [selectedInterviewId, setSelectedInterviewId] = useState<number>(
     interviews.length > 0 ? interviews[0].id : 0
   );
+  const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
 
   const selectedClient = interviews.find((i) => i.id === selectedInterviewId) || interviews[0] || null;
 
-  const handleDownloadPersonalizedProposal = () => {
-    if (!selectedClient) return;
-
-    const nivel = selectedClient.nivel_madurez;
+  const buildWhatsAppProposalText = (client: Interview): string => {
+    const nivel = client.nivel_madurez;
     const matriz = MATRIZ_EVALUACION[nivel] || MATRIZ_EVALUACION["Nivel 1: Inicial / Disperso"];
-    const empresa = selectedClient.empresa;
-    const responsable = selectedClient.responsable_nombre;
-    const rol = selectedClient.responsable_rol;
-    const sector = selectedClient.sector;
-    const score = selectedClient.score_global;
+    const empresa = client.empresa;
+    const responsable = client.responsable_nombre;
+    const rol = client.responsable_rol;
+    const sector =
+      client.sector === "Otro" && client.sector_otro
+        ? `Otro (${client.sector_otro})`
+        : client.sector;
+    const score = client.score_global;
     const procesoPrio =
-      selectedClient.proceso_prioritario === "Otro" && selectedClient.proceso_prioritario_otro
-        ? `Otro (${selectedClient.proceso_prioritario_otro})`
-        : selectedClient.proceso_prioritario;
-    const valorEsp = selectedClient.valor_esperado;
+      client.proceso_prioritario === "Otro" && client.proceso_prioritario_otro
+        ? client.proceso_prioritario_otro
+        : client.proceso_prioritario;
+    const valorEsp = client.valor_esperado;
+    const consultor = client.entrevistador || "Consultor BI";
 
-    const textoPropuesta = `PROPUESTA DE IMPLEMENTACIÓN DE BUSINESS INTELLIGENCE
-I+S DATA SOLUTIONS — Information + Solutions
-Inteligencia de Datos para Decisiones Estratégicas
-========================================================================
+    const pasosEmoji = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
+    const fasesTexto = matriz.prioridades_clave
+      .map((p, i) => `${pasosEmoji[i] || "✅"} *Fase ${i + 1}:* ${p}`)
+      .join("\n");
 
-CLIENTE: ${empresa}
-ATENCIÓN: ${responsable} ${rol ? `(${rol})` : ""}
-SECTOR: ${sector}
-DIAGNÓSTICO OFICIAL: ${nivel} (Score: ${score}/100 pts)
-CONSULTOR A CARGO: ${selectedClient.entrevistador || "Consultor BI"}
+    return `🚀 *PROPUESTA DE IMPLEMENTACIÓN DE BUSINESS INTELLIGENCE*
+✨ *I+S DATA SOLUTIONS* — _Information + Solutions_
+_Inteligencia de Datos para Decisiones Estratégicas_
 
-1. ENFOQUE Y ALCANCE:
-Implementación de un sistema de tableros de control y analítica focalizado en el proceso de:
->> ${procesoPrio} <<
+Hola *${responsable}* 👋, te compartimos el resumen ejecutivo y la propuesta de trabajo diseñada a medida para *${empresa}* a partir de nuestro relevamiento inicial:
 
-2. SOLUCIÓN TÉCNICA RECOMENDADA:
+📋 *FICHA DE DIAGNÓSTICO*
+• 🏢 *Empresa:* ${empresa}
+• 👤 *Referente:* ${responsable}${rol ? ` (${rol})` : ""}
+• 🏭 *Sector:* ${sector}
+• 📊 *Nivel de Madurez:* *${nivel}*
+• 🎯 *Score Global:* *${score}/100 pts*
+• 👨‍💼 *Consultor a cargo:* ${consultor}
+
+━━━━━━━━━━━━━━━━━━━━
+
+🎯 *1. ENFOQUE Y PROCESO PRIORITARIO*
+Implementación de un sistema de tableros de control y analítica focalizado en:
+👉 *${procesoPrio}*
+
+💡 *2. SOLUCIÓN TÉCNICA RECOMENDADA*
 ${matriz.solucion}
 
-3. RETORNO Y VALOR ESPERADO:
-${valorEsp}
+📈 *3. IMPACTO Y VALOR ESPERADO*
+✅ *${valorEsp}*
 
-4. FASES DEL PLAN DE ACCIÓN:
-${matriz.prioridades_clave.map((p, i) => `  Paso ${i + 1}: ${p}`).join("\n")}
+🛠️ *4. HOJA DE RUTA (PLAN DE ACCIÓN)*
+${fasesTexto}
 
-5. CONTACTO Y SEGUIMIENTO:
-I+S DATA SOLUTIONS — Information + Solutions
-Ubicación: E. Carriego N° 431, La Rioja, Argentina.
-========================================================================
-`;
+━━━━━━━━━━━━━━━━━━━━
 
-    const blob = new Blob([textoPropuesta], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `propuesta_bi_${empresa.toLowerCase().replace(/[^a-z0-9]/g, "_")}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+💬 _"El valor real no está en acumular datos, sino en saber utilizarlos para decidir mejor."_
+
+📍 *I+S Data Solutions*
+E. Carriego N° 431, La Rioja, Argentina.
+🤝 _Quedamos a disposición para coordinar el inicio del proyecto._`;
+  };
+
+  const handleCopyWhatsApp = async () => {
+    if (!selectedClient) return;
+    const textoPropuesta = buildWhatsAppProposalText(selectedClient);
+    try {
+      await navigator.clipboard.writeText(textoPropuesta);
+      setCopiedWhatsApp(true);
+      setTimeout(() => setCopiedWhatsApp(false), 2500);
+    } catch {
+      // Fallback copy
+      const textarea = document.createElement("textarea");
+      textarea.value = textoPropuesta;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setCopiedWhatsApp(true);
+      setTimeout(() => setCopiedWhatsApp(false), 2500);
+    }
   };
 
   return (
@@ -325,7 +353,7 @@ Ubicación: E. Carriego N° 431, La Rioja, Argentina.
 
             {interviews.length === 0 ? (
               <div className="p-4 bg-[#F5F8FB] border border-[#E4ECF2] rounded-xl text-xs text-slate-600">
-                No hay clientes relevados en la base de datos para generar una propuesta personalizada. Realice una entrevista primero en el módulo "Nueva Entrevista".
+                No hay clientes relevados en la base de datos para generar una propuesta personalizada. Realice una entrevista primero en el módulo "Primera Entrevista".
               </div>
             ) : (
               <div>
@@ -442,15 +470,41 @@ Ubicación: E. Carriego N° 431, La Rioja, Argentina.
                 );
               })()}
 
-              {/* Download Action */}
-              <div className="pt-4 border-t border-[#E4ECF2] flex justify-end">
-                <button
-                  onClick={handleDownloadPersonalizedProposal}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white btn-primary cursor-pointer"
-                >
-                  <Download className="w-4 h-4" />
-                  Descargar Propuesta Personalizada (.txt)
-                </button>
+              {/* WhatsApp Ready Preview & Download Action */}
+              <div className="pt-4 border-t border-[#E4ECF2] space-y-4">
+                <div className="bg-[#F5F8FB] border border-[#E4ECF2] rounded-2xl p-4 space-y-2.5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#1E252D] font-['Outfit']">
+                      <MessageSquare className="w-4 h-4 text-emerald-600" />
+                      <span>Vista Previa del Mensaje para WhatsApp (con formato *negrita* y emojis)</span>
+                    </div>
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Listo para pegar en WhatsApp
+                    </span>
+                  </div>
+                  <pre className="text-xs text-slate-700 whitespace-pre-wrap font-['Inter'] bg-white p-4 rounded-xl border border-[#E4ECF2] leading-relaxed max-h-72 overflow-y-auto select-all">
+                    {buildWhatsAppProposalText(selectedClient)}
+                  </pre>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <button
+                    onClick={handleCopyWhatsApp}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white btn-primary cursor-pointer"
+                  >
+                    {copiedWhatsApp ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>¡Copiado para WhatsApp!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span>Copiar Mensaje para WhatsApp</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}
