@@ -16,6 +16,8 @@ import {
   Check
 } from "lucide-react";
 import { ContrailCurves } from "./BrandHeader";
+import { useLanguage } from "../context/LanguageContext";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface ReportViewProps {
   interview: Interview;
@@ -29,7 +31,9 @@ export const ReportView: React.FC<ReportViewProps> = ({
   showBackButton = true
 }) => {
   const [viewMode, setViewMode] = useState<"standard" | "a4">("standard");
+  const { t, language, getLocalizedLevel } = useLanguage();
 
+  const localizedLevel = getLocalizedLevel(interview.nivel_madurez);
   const matrizInfo =
     MATRIZ_EVALUACION[interview.nivel_madurez] ||
     MATRIZ_EVALUACION["Nivel 1: Inicial / Disperso"];
@@ -40,12 +44,12 @@ export const ReportView: React.FC<ReportViewProps> = ({
 
   const sectorDisplay =
     interview.sector === "Otro" && interview.sector_otro
-      ? `Otro (${interview.sector_otro})`
+      ? `${language === "en" ? "Other" : "Otro"} (${interview.sector_otro})`
       : interview.sector;
 
   const procesoPrioDisplay =
     interview.proceso_prioritario === "Otro" && interview.proceso_prioritario_otro
-      ? `Otro (${interview.proceso_prioritario_otro})`
+      ? `${language === "en" ? "Other" : "Otro"} (${interview.proceso_prioritario_otro})`
       : interview.proceso_prioritario;
 
   const formattedDate = interview.created_at
@@ -56,11 +60,11 @@ export const ReportView: React.FC<ReportViewProps> = ({
 
   /* Dimension list for the compact breakdown bars */
   const dimensionList = [
-    { key: "Almacenamiento y Fuentes", label: "Almacenamiento", score: interview.dimensiones["Almacenamiento y Fuentes"] ?? 0 },
-    { key: "Integración entre Áreas", label: "Integración", score: interview.dimensiones["Integración entre Áreas"] ?? 0 },
-    { key: "Frecuencia de Actualización", label: "Frecuencia", score: interview.dimensiones["Frecuencia de Actualización"] ?? 0 },
-    { key: "Calidad y Consistencia", label: "Calidad Datos", score: interview.dimensiones["Calidad y Consistencia"] ?? 0 },
-    { key: "Eficiencia de Reportes", label: "Reportabilidad", score: interview.dimensiones["Eficiencia de Reportes"] ?? 0 }
+    { key: "Almacenamiento y Fuentes", label: t("dim_storage"), score: interview.dimensiones["Almacenamiento y Fuentes"] ?? 0 },
+    { key: "Integración entre Áreas", label: t("dim_integration"), score: interview.dimensiones["Integración entre Áreas"] ?? 0 },
+    { key: "Frecuencia de Actualización", label: t("dim_frequency"), score: interview.dimensiones["Frecuencia de Actualización"] ?? 0 },
+    { key: "Calidad y Consistencia", label: t("dim_quality"), score: interview.dimensiones["Calidad y Consistencia"] ?? 0 },
+    { key: "Eficiencia de Reportes", label: t("dim_reporting"), score: interview.dimensiones["Eficiencia de Reportes"] ?? 0 }
   ];
 
   /* -------------------------------------------------------------------------
@@ -82,23 +86,23 @@ export const ReportView: React.FC<ReportViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-xs tracking-wider uppercase text-[#1E252D] font-['Outfit']">
-                INFORMACIÓN + SOLUTIONS
+                {t("report_header_title")}
               </span>
               <span className="text-[9px] bg-[#E0EFF9] text-[#1E5E94] font-semibold px-1.5 py-0.2 rounded font-mono">
-                DIAGNÓSTICO A4
+                {language === "en" ? "A4 DIAGNOSIS" : "DIAGNÓSTICO A4"}
               </span>
             </div>
             <p className="text-[9.5px] text-slate-500 font-medium">
-              Data Solutions & Business Intelligence · Relevamiento de Madurez
+              {t("report_header_subtitle")}
             </p>
           </div>
         </div>
 
         <div className="text-right">
           <div className="text-[10px] font-mono font-bold text-[#1E252D]">{reportId}</div>
-          <div className="text-[9px] text-slate-500 font-mono">Fecha: {formattedDate}</div>
+          <div className="text-[9px] text-slate-500 font-mono">{language === "en" ? "Date: " : "Fecha: "}{formattedDate}</div>
           <div className="text-[8.5px] text-[#3B8AC4] font-semibold uppercase tracking-wider">
-            Documento Oficial
+            {t("badge_official")}
           </div>
         </div>
       </div>
@@ -108,7 +112,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <span className="text-[9px] font-bold uppercase tracking-wider text-[#BFA898] font-['Outfit']">
-              EMPRESA EVALUADA
+              {t("report_assessed_company")}
             </span>
           </div>
           <div className="text-base font-bold text-[#1E252D] font-['Outfit'] leading-tight">
@@ -116,16 +120,16 @@ export const ReportView: React.FC<ReportViewProps> = ({
           </div>
           <div className="flex flex-wrap items-center gap-x-2 text-[10px] text-slate-600">
             <span>
-              <strong className="text-[#1E252D]">Contacto:</strong> {interview.responsable_nombre}
+              <strong className="text-[#1E252D]">{t("report_contact")}:</strong> {interview.responsable_nombre}
               {interview.responsable_rol ? ` (${interview.responsable_rol})` : ""}
             </span>
             <span>·</span>
             <span>
-              <strong className="text-[#1E252D]">Sector:</strong> {sectorDisplay}
+              <strong className="text-[#1E252D]">{t("report_sector")}:</strong> {sectorDisplay}
             </span>
             <span>·</span>
             <span>
-              <strong className="text-[#1E252D]">Tamaño:</strong> {interview.colaboradores} colaboradores
+              <strong className="text-[#1E252D]">{t("report_size")}:</strong> {interview.colaboradores} {t("report_collaborators")}
             </span>
           </div>
         </div>
@@ -133,10 +137,10 @@ export const ReportView: React.FC<ReportViewProps> = ({
         {/* Diagnosis Badge & Score */}
         <div className="text-right shrink-0 bg-white border border-[#E4ECF2] rounded-lg px-3 py-1.5 shadow-2xs">
           <span className="text-[8.5px] uppercase font-bold tracking-wider text-slate-400 block font-['Outfit']">
-            Dictamen Oficial
+            {t("report_official_verdict")}
           </span>
           <div className="text-xs font-bold text-[#1E252D] font-['Outfit']">
-            {interview.nivel_madurez}
+            {localizedLevel.title}
           </div>
           <div className="text-[10px] font-mono font-semibold text-[#3B8AC4]">
             {interview.score_global} / 100 pts
@@ -149,25 +153,25 @@ export const ReportView: React.FC<ReportViewProps> = ({
         {/* Left: Gauge Chart */}
         <div className="col-span-4 bg-white border border-[#E4ECF2] rounded-xl p-2 flex flex-col items-center justify-center text-center">
           <div className="text-[9.5px] font-bold text-[#1E252D] uppercase tracking-wider mb-1 font-['Outfit']">
-            Índice de Madurez
+            {t("report_maturity_index")}
           </div>
           <GaugeChart
             value={interview.score_global}
-            label={interview.nivel_madurez.replace(/Nivel \d:\s*/, "")}
+            label={localizedLevel.short}
             badgeColor={matrizInfo.badge_color}
             compact={true}
           />
           <div className="w-full grid grid-cols-3 gap-1 text-[7.5px] text-slate-500 mt-1 pt-1 border-t border-slate-100 font-mono text-center">
-            <span className="text-red-500 font-semibold">0-45 Disperso</span>
-            <span className="text-[#BFA898] font-semibold">46-75 Operativo</span>
-            <span className="text-[#3B8AC4] font-semibold">76-100 Avanzado</span>
+            <span className="text-red-500 font-semibold">{language === "en" ? "0-45 Dispersed" : "0-45 Disperso"}</span>
+            <span className="text-[#BFA898] font-semibold">{language === "en" ? "46-75 Operational" : "46-75 Operativo"}</span>
+            <span className="text-[#3B8AC4] font-semibold">{language === "en" ? "76-100 Ready" : "76-100 Avanzado"}</span>
           </div>
         </div>
 
         {/* Center: Radar Chart */}
         <div className="col-span-4 bg-white border border-[#E4ECF2] rounded-xl p-2 flex flex-col items-center justify-center text-center">
           <div className="text-[9.5px] font-bold text-[#1E252D] uppercase tracking-wider mb-0.5 font-['Outfit']">
-            Radar Pentagonal
+            {t("report_pentagonal_radar")}
           </div>
           <RadarChart
             dimensiones={interview.dimensiones}
@@ -179,7 +183,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
         {/* Right: Dimension Bars */}
         <div className="col-span-4 bg-white border border-[#E4ECF2] rounded-xl p-2.5 flex flex-col justify-between">
           <div className="text-[9.5px] font-bold text-[#1E252D] uppercase tracking-wider mb-1 font-['Outfit']">
-            Puntuación por Dimensión
+            {t("report_dimension_scores")}
           </div>
           <div className="space-y-1.5 flex-1 flex flex-col justify-center">
             {dimensionList.map((dim) => (
@@ -214,11 +218,11 @@ export const ReportView: React.FC<ReportViewProps> = ({
           <div className="flex items-center gap-1.5 mb-1">
             <AlertTriangle className="w-3.5 h-3.5 text-[#BFA898]" />
             <span className="text-[9.5px] font-bold uppercase tracking-wider text-slate-600 font-['Outfit']">
-              Criterio Diagnóstico
+              {t("report_diagnostic_criteria")}
             </span>
           </div>
           <p className="text-[9.5px] text-slate-700 leading-snug">
-            {matrizInfo.criterio}
+            {localizedLevel.criteria}
           </p>
         </div>
 
@@ -226,11 +230,11 @@ export const ReportView: React.FC<ReportViewProps> = ({
           <div className="flex items-center gap-1.5 mb-1">
             <CheckCircle2 className="w-3.5 h-3.5 text-[#3B8AC4]" />
             <span className="text-[9.5px] font-bold uppercase tracking-wider text-[#1E5E94] font-['Outfit']">
-              Solución Inicial Recomendada
+              {t("report_recommended_solution")}
             </span>
           </div>
           <p className="text-[9.5px] text-[#1E252D] font-medium leading-snug">
-            {matrizInfo.solucion}
+            {localizedLevel.solution}
           </p>
         </div>
       </div>
@@ -239,7 +243,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
       <div className="mb-2.5">
         <div className="text-[9.5px] font-bold uppercase tracking-wider text-slate-500 mb-1 font-['Outfit'] flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-[#3B8AC4]" />
-          <span>Plan de Acción Inmediato (4 Fases Clave)</span>
+          <span>{t("report_immediate_action_plan")}</span>
         </div>
         <div className="grid grid-cols-4 gap-1.5">
           {matrizInfo.prioridades_clave.map((paso, idx) => (
@@ -248,7 +252,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
               className="bg-white border border-[#E4ECF2] rounded-lg p-2 flex flex-col justify-between"
             >
               <div className="text-[8.5px] font-mono font-bold text-[#3B8AC4] uppercase mb-0.5">
-                PASO {idx + 1}
+                {t("report_step_prefix")} {idx + 1}
               </div>
               <p className="text-[8.5px] text-slate-700 font-medium leading-tight line-clamp-3">
                 {paso}
@@ -263,51 +267,51 @@ export const ReportView: React.FC<ReportViewProps> = ({
         {/* Left: Relevamiento Operativo */}
         <div className="bg-white border border-[#E4ECF2] rounded-xl p-2.5 space-y-1">
           <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#1E252D] border-b border-slate-100 pb-1 font-['Outfit']">
-            Relevamiento Operativo
+            {t("report_operational_assessment")}
           </div>
           <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[9px] text-slate-700">
             <div>
-              <span className="font-semibold text-[#1E252D]">Integración: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_integration")}: </span>
               {interview.integracion_nivel}
             </div>
             <div>
-              <span className="font-semibold text-[#1E252D]">Frecuencia: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_frequency")}: </span>
               {interview.frecuencia_actualizacion}
             </div>
             <div>
-              <span className="font-semibold text-[#1E252D]">Confianza: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_confidence")}: </span>
               {interview.confianza_datos}
             </div>
             <div>
-              <span className="font-semibold text-[#1E252D]">Herramienta: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_current_tool")}: </span>
               {interview.herramienta_visualizacion}
             </div>
           </div>
           <div className="text-[8.5px] text-slate-600 pt-0.5">
-            <span className="font-semibold text-[#1E252D]">Fuentes: </span>
+            <span className="font-semibold text-[#1E252D]">{t("report_storage_sources")}: </span>
             {interview.almacenamiento_fuentes && interview.almacenamiento_fuentes.length > 0
               ? interview.almacenamiento_fuentes.join(", ")
-              : "No especificadas"}
+              : (language === "en" ? "Not specified" : "No especificadas")}
           </div>
         </div>
 
         {/* Right: Objetivos y Expectativas */}
         <div className="bg-white border border-[#E4ECF2] rounded-xl p-2.5 space-y-1">
           <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#1E252D] border-b border-slate-100 pb-1 font-['Outfit']">
-            Objetivos y Expectativas
+            {t("report_goals_expectations")}
           </div>
           <div className="text-[9px] text-slate-700 space-y-0.5">
             <div>
-              <span className="font-semibold text-[#1E252D]">Proceso prioritario: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_priority_process")}: </span>
               <span className="text-[#3B8AC4] font-semibold">{procesoPrioDisplay}</span>
             </div>
             <div>
-              <span className="font-semibold text-[#1E252D]">Valor esperado: </span>
+              <span className="font-semibold text-[#1E252D]">{t("report_expected_value")}: </span>
               <span className="text-slate-600">{interview.valor_esperado}</span>
             </div>
             {interview.obstaculos_decision && interview.obstaculos_decision.length > 0 && (
               <div className="text-[8.5px] text-slate-600 truncate">
-                <span className="font-semibold text-[#1E252D]">Obstáculos: </span>
+                <span className="font-semibold text-[#1E252D]">{t("report_obstacles")}: </span>
                 {interview.obstaculos_decision.join(" · ")}
               </div>
             )}
@@ -318,12 +322,12 @@ export const ReportView: React.FC<ReportViewProps> = ({
       {/* 7. Institutional Footer & Single Sheet Assurance */}
       <div className="border-t border-slate-200 pt-2 flex items-center justify-between text-[8.5px] text-slate-500 font-['Inter']">
         <div>
-          <span className="font-semibold text-[#1E252D]">I+S Data Solutions</span> · Plataforma Integral de Relevamiento BI · www.isdatasolutions.com
+          <span className="font-semibold text-[#1E252D]">I+S Data Solutions</span> · {t("report_header_subtitle")}
         </div>
         <div className="flex items-center gap-3">
           <span className="font-mono text-slate-400">Hash: {interview.id || "001"}-{interview.score_global}</span>
           <span className="font-semibold text-[#1E252D] bg-slate-100 px-2 py-0.5 rounded">
-            Página 1 de 1 · Formato A4
+            {t("report_page_info")}
           </span>
         </div>
       </div>
@@ -340,13 +344,16 @@ export const ReportView: React.FC<ReportViewProps> = ({
             className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#1E252D] bg-white border border-[#E4ECF2] rounded-xl hover:bg-[#F5F8FB] transition-colors shadow-2xs cursor-pointer font-['Outfit']"
           >
             <ArrowLeft className="w-4 h-4 text-[#3B8AC4]" />
-            Volver al Listado
+            {t("btn_back_to_list")}
           </button>
         ) : (
           <div />
         )}
 
         <div className="flex items-center gap-2 ml-auto">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {/* Mode toggle */}
           <div className="inline-flex rounded-xl border border-[#E4ECF2] bg-white p-1 shadow-2xs">
             <button
@@ -358,7 +365,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
               }`}
             >
               <Layout className="w-3.5 h-3.5" />
-              <span>Vista Completa</span>
+              <span>{t("btn_view_full")}</span>
             </button>
             <button
               onClick={() => setViewMode("a4")}
@@ -369,7 +376,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Vista Hoja A4 (1 Pág)</span>
+              <span>{t("btn_view_a4")}</span>
             </button>
           </div>
 
@@ -377,10 +384,10 @@ export const ReportView: React.FC<ReportViewProps> = ({
           <button
             onClick={handlePrint}
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white btn-primary cursor-pointer shadow-xs font-['Outfit']"
-            title="Imprimir el diagnóstico o guardarlo como PDF en una sola hoja A4"
+            title={t("btn_print_pdf")}
           >
             <Printer className="w-4 h-4" />
-            <span>Imprimir / Guardar como PDF</span>
+            <span>{t("btn_print_pdf")}</span>
           </button>
         </div>
       </div>

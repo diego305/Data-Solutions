@@ -7,6 +7,7 @@ import { AnalyticsView } from "./components/AnalyticsView";
 import { MethodologyView } from "./components/MethodologyView";
 import { getInterviews, initStorage } from "./lib/storage";
 import { AuthProvider } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import { Interview } from "./types";
 
 function MainApp() {
@@ -67,7 +68,9 @@ function MainApp() {
 export function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <LanguageProvider>
+        <MainApp />
+      </LanguageProvider>
     </AuthProvider>
   );
 }

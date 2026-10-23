@@ -16,7 +16,9 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { AppSquircleIcon } from "./BrandHeader";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export type NavModule = "form" | "proposal" | "admin" | "analytics" | "methodology";
 
@@ -33,6 +35,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { guestUser, updateGuestProfile, resetGuestProfile } = useAuth();
+  const { t } = useLanguage();
 
   // Profile Edit Modal State
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -61,28 +64,28 @@ export const Navigation: React.FC<NavigationProps> = ({
   const menuItems: { id: NavModule; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
       id: "proposal",
-      label: "Propuesta de Trabajo",
+      label: t("nav_proposal"),
       icon: <Briefcase className="w-4 h-4 text-[#BFA898]" />
     },
     {
       id: "form",
-      label: "Primera Entrevista",
+      label: t("nav_form"),
       icon: <FileText className="w-4 h-4 text-[#3B8AC4]" />
     },
     {
       id: "admin",
-      label: "Administración",
+      label: t("nav_admin"),
       icon: <Settings className="w-4 h-4 text-[#1E252D]" />,
       badge: interviewCount > 0 ? interviewCount.toString() : undefined
     },
     {
       id: "analytics",
-      label: "Analítica de Clientes",
+      label: t("nav_analytics"),
       icon: <BarChart3 className="w-4 h-4 text-[#3B8AC4]" />
     },
     {
       id: "methodology",
-      label: "Matriz & Metodología",
+      label: t("nav_methodology"),
       icon: <HelpCircle className="w-4 h-4 text-slate-500" />
     }
   ];
@@ -107,13 +110,16 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           </div>
         </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 text-[#1E252D] hover:bg-white rounded-xl border border-[#E4ECF2] bg-white/70 cursor-pointer transition-colors"
-          aria-label="Abrir menú"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher showIcon={false} />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 text-[#1E252D] hover:bg-white rounded-xl border border-[#E4ECF2] bg-white/70 cursor-pointer transition-colors"
+            aria-label="Abrir menú"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </header>
 
       {/* Backdrop - Strictly hidden when printing */}
@@ -151,15 +157,23 @@ export const Navigation: React.FC<NavigationProps> = ({
           </button>
         </div>
 
+        {/* Language Selector Bar */}
+        <div className="mb-3 px-1 flex items-center justify-between">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-['Outfit']">
+            {t("nav_language")}
+          </span>
+          <LanguageSwitcher />
+        </div>
+
         {/* Guest Access Profile Card */}
         <div className="mb-4 bg-white p-3.5 rounded-2xl border border-[#E4ECF2] shadow-[0px_2px_8px_rgba(30,37,45,0.04)]">
           <div className="flex items-center justify-between mb-2">
             <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
               <HardDrive className="w-3.5 h-3.5 text-[#3B8AC4]" />
-              <span>Acceso Invitado</span>
+              <span>{t("nav_guest_access")}</span>
             </span>
             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border bg-sky-50 text-[#3B8AC4] border-[#7EBCE6]/50">
-              Modo Invitado
+              {t("nav_guest_access")}
             </span>
           </div>
 
@@ -180,9 +194,9 @@ export const Navigation: React.FC<NavigationProps> = ({
 
             <button
               onClick={handleOpenEditProfile}
-              title="Personalizar datos del consultor"
+              title={t("nav_edit_profile")}
               className="p-1.5 text-slate-400 hover:text-[#3B8AC4] hover:bg-sky-50 rounded-lg transition-colors cursor-pointer shrink-0"
-              aria-label="Editar perfil de consultor"
+              aria-label={t("nav_edit_profile")}
             >
               <Edit2 className="w-3.5 h-3.5" />
             </button>
@@ -191,10 +205,10 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-emerald-600" />
-              <span>Almacenamiento Local</span>
+              <span>{t("nav_language") === "Language" ? "Local Storage" : "Almacenamiento Local"}</span>
             </span>
             <span className="font-mono tabular-nums text-slate-600 font-medium">
-              {interviewCount} {interviewCount === 1 ? "registro" : "registros"}
+              {interviewCount} {t("nav_language") === "Language" ? (interviewCount === 1 ? "record" : "records") : (interviewCount === 1 ? "registro" : "registros")}
             </span>
           </div>
         </div>
@@ -202,7 +216,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         {/* Modules Navigation */}
         <div className="mb-2">
           <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2 px-2 font-['Outfit']">
-            Módulos del Sistema
+            {t("nav_language") === "Language" ? "System Modules" : "Módulos del Sistema"}
           </span>
           <nav className="space-y-1">
             {menuItems.map((item) => {

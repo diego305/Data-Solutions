@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Interview } from "../types";
 import { updateInterview, deleteInterview, seedSampleData, resetDatabase } from "../lib/storage";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { ReportView } from "./ReportView";
 import * as XLSX from "xlsx";
 import {
@@ -29,6 +30,7 @@ interface AdminViewProps {
 
 export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) => {
   const { guestUser } = useAuth();
+  const { t, language } = useLanguage();
   const [selectedIdForReport, setSelectedIdForReport] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterLevel, setFilterLevel] = useState("Todos");

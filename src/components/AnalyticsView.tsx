@@ -2,6 +2,7 @@ import React from "react";
 import { Interview, DimensionScores } from "../types";
 import { RadarChart } from "./charts/RadarChart";
 import { seedSampleData } from "../lib/storage";
+import { useLanguage } from "../context/LanguageContext";
 import { Sprout, BarChart3, TrendingUp, Award, Zap } from "lucide-react";
 
 interface AnalyticsViewProps {
@@ -10,6 +11,7 @@ interface AnalyticsViewProps {
 }
 
 export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefresh }) => {
+  const { t, language } = useLanguage();
   if (interviews.length === 0) {
     return (
       <div className="max-w-4xl mx-auto space-y-6 text-center py-12 font-['Inter']">

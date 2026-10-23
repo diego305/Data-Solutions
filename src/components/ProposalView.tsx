@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Interview } from "../types";
 import { MATRIZ_EVALUACION } from "../config/constants";
 import { BrandBanner, ContrailCurves } from "./BrandHeader";
+import { useLanguage } from "../context/LanguageContext";
 import {
   ShieldCheck,
   MapPin,
@@ -20,68 +21,12 @@ export const ProposalView: React.FC<ProposalViewProps> = ({ interviews }) => {
     interviews.length > 0 ? interviews[0].id : 0
   );
   const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
+  const { t, language, generateWhatsAppProposal } = useLanguage();
 
   const selectedClient = interviews.find((i) => i.id === selectedInterviewId) || interviews[0] || null;
 
   const buildWhatsAppProposalText = (client: Interview): string => {
-    const nivel = client.nivel_madurez;
-    const matriz = MATRIZ_EVALUACION[nivel] || MATRIZ_EVALUACION["Nivel 1: Inicial / Disperso"];
-    const empresa = client.empresa;
-    const responsable = client.responsable_nombre;
-    const rol = client.responsable_rol;
-    const sector =
-      client.sector === "Otro" && client.sector_otro
-        ? `Otro (${client.sector_otro})`
-        : client.sector;
-    const score = client.score_global;
-    const procesoPrio =
-      client.proceso_prioritario === "Otro" && client.proceso_prioritario_otro
-        ? client.proceso_prioritario_otro
-        : client.proceso_prioritario;
-    const valorEsp = client.valor_esperado;
-    const consultor = client.entrevistador || "Consultor BI";
-
-    const pasosEmoji = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
-    const fasesTexto = matriz.prioridades_clave
-      .map((p, i) => `${pasosEmoji[i] || "✅"} *Fase ${i + 1}:* ${p}`)
-      .join("\n");
-
-    return `🚀 *PROPUESTA DE IMPLEMENTACIÓN DE BUSINESS INTELLIGENCE*
-✨ *I+S DATA SOLUTIONS* — _Information + Solutions_
-_Inteligencia de Datos para Decisiones Estratégicas_
-
-Hola *${responsable}* 👋, te compartimos el resumen ejecutivo y la propuesta de trabajo diseñada a medida para *${empresa}* a partir de nuestro relevamiento inicial:
-
-📋 *FICHA DE DIAGNÓSTICO*
-• 🏢 *Empresa:* ${empresa}
-• 👤 *Referente:* ${responsable}${rol ? ` (${rol})` : ""}
-• 🏭 *Sector:* ${sector}
-• 📊 *Nivel de Madurez:* *${nivel}*
-• 🎯 *Score Global:* *${score}/100 pts*
-• 👨‍💼 *Consultor a cargo:* ${consultor}
-
-━━━━━━━━━━━━━━━━━━━━
-
-🎯 *1. ENFOQUE Y PROCESO PRIORITARIO*
-Implementación de un sistema de tableros de control y analítica focalizado en:
-👉 *${procesoPrio}*
-
-💡 *2. SOLUCIÓN TÉCNICA RECOMENDADA*
-${matriz.solucion}
-
-📈 *3. IMPACTO Y VALOR ESPERADO*
-✅ *${valorEsp}*
-
-🛠️ *4. HOJA DE RUTA (PLAN DE ACCIÓN)*
-${fasesTexto}
-
-━━━━━━━━━━━━━━━━━━━━
-
-💬 _"El valor real no está en acumular datos, sino en saber utilizarlos para decidir mejor."_
-
-📍 *I+S Data Solutions*
-E. Carriego N° 431, La Rioja, Argentina.
-🤝 _Quedamos a disposición para coordinar el inicio del proyecto._`;
+    return generateWhatsAppProposal(client);
   };
 
   const handleCopyWhatsApp = async () => {
@@ -108,9 +53,9 @@ E. Carriego N° 431, La Rioja, Argentina.
     <div className="max-w-5xl mx-auto space-y-6 pb-12 font-['Inter']">
       {/* Brand Hero Banner */}
       <BrandBanner
-        title="Propuesta de Servicios y Modelo de Trabajo"
-        subtitle="Inteligencia de Datos para Decisiones Estratégicas en Empresas y Productores"
-        categoryTag="MODELO DE TRABAJO I+S"
+        title={t("prop_title")}
+        subtitle={t("prop_subtitle")}
+        categoryTag={t("prop_badge")}
       />
 
       {/* Navigation Tabs */}
@@ -123,7 +68,7 @@ E. Carriego N° 431, La Rioja, Argentina.
               : "border-transparent text-slate-500 hover:text-[#1E252D] hover:border-slate-300"
           }`}
         >
-          Propuesta Institucional
+          {t("prop_tab_institutional")}
         </button>
         <button
           onClick={() => setActiveTab("personalizada")}
@@ -133,7 +78,7 @@ E. Carriego N° 431, La Rioja, Argentina.
               : "border-transparent text-slate-500 hover:text-[#1E252D] hover:border-slate-300"
           }`}
         >
-          <span>Propuesta Personalizada por Cliente</span>
+          <span>{t("prop_tab_custom")}</span>
           {interviews.length > 0 && (
             <span className="text-[11px] font-mono tabular-nums bg-sky-50 text-[#3B8AC4] font-semibold px-2 py-0.5 rounded-md border border-[#7EBCE6]/40">
               {interviews.length}
@@ -476,10 +421,10 @@ E. Carriego N° 431, La Rioja, Argentina.
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2 text-xs font-semibold text-[#1E252D] font-['Outfit']">
                       <MessageSquare className="w-4 h-4 text-emerald-600" />
-                      <span>Vista Previa del Mensaje para WhatsApp (con formato *negrita* y emojis)</span>
+                      <span>{t("prop_copy_instruction")}</span>
                     </div>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Listo para pegar en WhatsApp
+                      {t("prop_whatsapp_ready")}
                     </span>
                   </div>
                   <pre className="text-xs text-slate-700 whitespace-pre-wrap font-['Inter'] bg-white p-4 rounded-xl border border-[#E4ECF2] leading-relaxed max-h-72 overflow-y-auto select-all">
@@ -495,12 +440,12 @@ E. Carriego N° 431, La Rioja, Argentina.
                     {copiedWhatsApp ? (
                       <>
                         <Check className="w-4 h-4" />
-                        <span>¡Copiado para WhatsApp!</span>
+                        <span>{t("btn_copied")}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4" />
-                        <span>Copiar Mensaje para WhatsApp</span>
+                        <span>{t("btn_copy_whatsapp")}</span>
                       </>
                     )}
                   </button>
