@@ -49,7 +49,12 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs">
-      <svg viewBox="0 0 300 175" className="w-full max-w-[280px] h-auto overflow-visible">
+      <svg
+        viewBox="0 0 300 175"
+        width="280"
+        height="165"
+        className="w-full max-w-[280px] h-auto overflow-visible"
+      >
         {/* Track segments */}
         <path d={d1} fill="none" stroke="#FEE2E2" strokeWidth={strokeWidth} strokeLinecap="round" />
         <path d={d2} fill="none" stroke="#EFE7E1" strokeWidth={strokeWidth} />

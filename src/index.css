@@ -73,3 +73,31 @@
   border-color: #7EBCE6;
   box-shadow: 0px 6px 20px rgba(59, 138, 196, 0.08);
 }
+
+/* Print and PDF Export Styles */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #1E252D !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  aside, nav, .print\:hidden {
+    display: none !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print\:p-0 {
+    padding: 0 !important;
+  }
+
+  .print\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem !important;
+  }
+}
+

@@ -4,7 +4,6 @@ import { MATRIZ_EVALUACION } from "../config/constants";
 import { GaugeChart } from "./charts/GaugeChart";
 import { RadarChart } from "./charts/RadarChart";
 import {
-  Download,
   ArrowLeft,
   Printer,
   Building2,
@@ -27,43 +26,6 @@ export const ReportView: React.FC<ReportViewProps> = ({
   const matrizInfo =
     MATRIZ_EVALUACION[interview.nivel_madurez] ||
     MATRIZ_EVALUACION["Nivel 1: Inicial / Disperso"];
-
-  const handleDownloadTxt = () => {
-    const resumenTxt = `# REPORTE DE EVALUACIÓN DE MADUREZ DE DATOS & BI
-I+S DATA SOLUTIONS — Information + Solutions
-========================================================================
-Empresa: ${interview.empresa}
-Responsable: ${interview.responsable_nombre} ${interview.responsable_rol ? `(${interview.responsable_rol})` : ""}
-Sector: ${interview.sector}${interview.sector === "Otro" && interview.sector_otro ? ` (${interview.sector_otro})` : ""}
-Fecha: ${interview.created_at.substring(0, 10)}
-Puntaje Global: ${interview.score_global}/100
-Nivel de Madurez: ${interview.nivel_madurez}
-
-CRITERIO DIAGNÓSTICO:
-${matrizInfo.criterio}
-
-SOLUCIÓN INICIAL RECOMENDADA:
-${matrizInfo.solucion}
-
-PLAN DE ACCIÓN:
-${matrizInfo.prioridades_clave.map((p, idx) => `Paso ${idx + 1}: ${p}`).join("\n")}
-
-PROCESO PRIORITARIO: ${interview.proceso_prioritario}${interview.proceso_prioritario === "Otro" && interview.proceso_prioritario_otro ? ` (${interview.proceso_prioritario_otro})` : ""}
-VALOR ESPERADO: ${interview.valor_esperado}
-NOTAS DEL CONSULTOR: ${interview.observaciones_consultor || "Sin observaciones"}
-CONSULTOR: ${interview.entrevistador || "Consultor BI"}
-========================================================================
-I+S DATA SOLUTIONS — E. Carriego N° 431, La Rioja, Argentina
-`;
-
-    const blob = new Blob([resumenTxt], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `diagnostico_bi_${interview.empresa.toLowerCase().replace(/[^a-z0-9]/g, "_")}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
 
   const handlePrint = () => {
     window.print();
@@ -97,17 +59,11 @@ I+S DATA SOLUTIONS — E. Carriego N° 431, La Rioja, Argentina
         <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#1E252D] bg-white border border-[#E4ECF2] rounded-xl hover:bg-[#F5F8FB] transition-colors shadow-2xs cursor-pointer font-['Outfit']"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white btn-primary cursor-pointer shadow-xs font-['Outfit']"
+            title="Imprimir el diagnóstico o guardarlo como PDF usando el navegador"
           >
-            <Printer className="w-4 h-4 text-slate-500" />
-            Imprimir
-          </button>
-          <button
-            onClick={handleDownloadTxt}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#3B8AC4] hover:bg-[#3277ab] rounded-xl transition-all shadow-[0px_4px_12px_rgba(59,138,196,0.25)] cursor-pointer font-['Outfit']"
-          >
-            <Download className="w-4 h-4" />
-            Descargar Informe (.txt)
+            <Printer className="w-4 h-4" />
+            <span>Imprimir / Guardar como PDF</span>
           </button>
         </div>
       </div>

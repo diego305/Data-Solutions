@@ -137,7 +137,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 className="text-[10px] font-medium fill-[#1E252D] pointer-events-none select-none font-['Outfit']"
               >
                 {cat.split(" ")[0]}{" "}
-                <tspan className="font-mono tabular-nums text-[#3B8AC4] font-semibold">({val}%)</tspan>
+                <tspan fill="#3B8AC4" className="font-mono tabular-nums font-semibold">({val}%)</tspan>
               </text>
             </g>
           );
