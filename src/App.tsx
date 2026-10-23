@@ -47,8 +47,8 @@ function MainApp() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-72 flex flex-col min-h-screen">
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 lg:ml-72 flex flex-col min-h-screen print:ml-0 print:m-0 print:min-h-0">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto print:p-0 print:m-0 print:overflow-visible">
           {currentModule === "form" && <FormView />}
           {currentModule === "proposal" && <ProposalView interviews={interviews} />}
           {currentModule === "admin" && (

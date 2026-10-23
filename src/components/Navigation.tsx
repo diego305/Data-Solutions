@@ -94,8 +94,8 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <>
-      {/* Mobile Glassmorphic Top Bar */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-40">
+      {/* Mobile Glassmorphic Top Bar - Strictly hidden when printing */}
+      <header className="lg:hidden print:hidden no-print flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <AppSquircleIcon size={38} />
           <div>
@@ -114,19 +114,19 @@ export const Navigation: React.FC<NavigationProps> = ({
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-      </div>
+      </header>
 
-      {/* Backdrop */}
+      {/* Backdrop - Strictly hidden when printing */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-[#1E252D]/40 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-[#1E252D]/40 backdrop-blur-xs z-40 lg:hidden print:hidden no-print"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar Desktop & Mobile Drawer */}
+      {/* Sidebar Desktop & Mobile Drawer - Strictly hidden when printing */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#F5F8FB] border-r border-[#E4ECF2] flex flex-col p-4 transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#F5F8FB] border-r border-[#E4ECF2] flex flex-col p-4 transition-transform duration-200 ease-in-out lg:translate-x-0 print:hidden no-print ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
