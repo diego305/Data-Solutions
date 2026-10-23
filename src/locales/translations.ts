@@ -146,6 +146,25 @@ export interface Translations {
   analytics_average_score: string;
   analytics_predominant_level: string;
   analytics_most_frequent_sector: string;
+  analytics_max_score: string;
+  analytics_min_score: string;
+  analytics_maturity_dist: string;
+  analytics_sectors_dist: string;
+  analytics_obstacles_dist: string;
+  analytics_priority_processes: string;
+  analytics_radar_title: string;
+  analytics_radar_subtitle: string;
+  analytics_a4_badge: string;
+  analytics_a4_notice: string;
+  analytics_executive_insights: string;
+  analytics_bottleneck_label: string;
+  analytics_opportunity_label: string;
+  analytics_market_diagnostic: string;
+  analytics_empty_title: string;
+  analytics_empty_desc: string;
+  analytics_empty_seed: string;
+  analytics_clients_suffix: string;
+  analytics_mentions_suffix: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -294,7 +313,26 @@ export const translations: Record<Language, Translations> = {
     analytics_total_assessments: "Total de Evaluaciones",
     analytics_average_score: "Score Promedio",
     analytics_predominant_level: "Nivel Predominante",
-    analytics_most_frequent_sector: "Sector Frecuente"
+    analytics_most_frequent_sector: "Sector Frecuente",
+    analytics_max_score: "Score Máximo",
+    analytics_min_score: "Score Mínimo",
+    analytics_maturity_dist: "Distribución de Madurez de Datos",
+    analytics_sectors_dist: "Entrevistas por Sector Económico",
+    analytics_obstacles_dist: "Obstáculos Principales para Decidir",
+    analytics_priority_processes: "Procesos Prioritarios para Tablero",
+    analytics_radar_title: "Madurez Promedio de la Cartera por Dimensión",
+    analytics_radar_subtitle: "Desempeño consolidado del portafolio en los 5 ejes clave del diagnóstico.",
+    analytics_a4_badge: "ANALÍTICA CONSOLIDADA DE MERCADO",
+    analytics_a4_notice: "Modo Vista A4 (1 Hoja): Este informe consolidado está calibrado para imprimirse o guardarse en PDF en exactamente una sola hoja A4 sin cortes.",
+    analytics_executive_insights: "Conclusiones Estratégicas del Portafolio",
+    analytics_bottleneck_label: "Cuello de Botella Estructural",
+    analytics_opportunity_label: "Oportunidad de Mayor Tracción",
+    analytics_market_diagnostic: "Diagnóstico General del Relevamiento",
+    analytics_empty_title: "No hay datos suficientes para calcular analíticas",
+    analytics_empty_desc: "Cargue al menos una entrevista o agregue los datos de muestra para visualizar métricas comparativas.",
+    analytics_empty_seed: "Cargar Entrevistas de Ejemplo",
+    analytics_clients_suffix: "clientes",
+    analytics_mentions_suffix: "menciones"
   },
   en: {
     // Navigation
@@ -441,6 +479,25 @@ export const translations: Record<Language, Translations> = {
     analytics_total_assessments: "Total Assessments",
     analytics_average_score: "Average Score",
     analytics_predominant_level: "Predominant Level",
-    analytics_most_frequent_sector: "Frequent Sector"
+    analytics_most_frequent_sector: "Frequent Sector",
+    analytics_max_score: "Maximum Score",
+    analytics_min_score: "Minimum Score",
+    analytics_maturity_dist: "Data Maturity Distribution",
+    analytics_sectors_dist: "Assessments by Economic Sector",
+    analytics_obstacles_dist: "Main Decision-Making Obstacles",
+    analytics_priority_processes: "Priority Processes for Dashboard",
+    analytics_radar_title: "Portfolio Average Maturity by Dimension",
+    analytics_radar_subtitle: "Consolidated portfolio performance across the 5 diagnostic axes.",
+    analytics_a4_badge: "CONSOLIDATED MARKET ANALYTICS",
+    analytics_a4_notice: "A4 Sheet Mode (1 Page): This consolidated report is calibrated to print or save as PDF in exactly one single A4 sheet without cutoffs.",
+    analytics_executive_insights: "Strategic Portfolio Insights",
+    analytics_bottleneck_label: "Structural Bottleneck",
+    analytics_opportunity_label: "Highest Traction Opportunity",
+    analytics_market_diagnostic: "General Assessment Diagnostic",
+    analytics_empty_title: "Not enough data to calculate analytics",
+    analytics_empty_desc: "Load at least one interview or add sample data to visualize comparative metrics.",
+    analytics_empty_seed: "Load Sample Interviews",
+    analytics_clients_suffix: "clients",
+    analytics_mentions_suffix: "mentions"
   }
 };
