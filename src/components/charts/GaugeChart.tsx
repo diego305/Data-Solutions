@@ -5,13 +5,15 @@ interface GaugeChartProps {
   max?: number;
   label?: string;
   badgeColor?: string;
+  compact?: boolean;
 }
 
 export const GaugeChart: React.FC<GaugeChartProps> = ({
   value,
   max = 100,
   label = "Nivel de Preparación BI",
-  badgeColor = "#3B8AC4"
+  badgeColor = "#3B8AC4",
+  compact = false
 }) => {
   const clampedValue = Math.min(Math.max(value, 0), max);
   const percentage = clampedValue / max;
@@ -19,7 +21,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const cx = 150;
   const cy = 135;
   const r = 95;
-  const strokeWidth = 20;
+  const strokeWidth = compact ? 22 : 20;
 
   const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
     const angleInRadians = ((angleInDegrees - 180) * Math.PI) / 180.0;
@@ -48,12 +50,12 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const needlePos = polarToCartesian(cx, cy, r - 12, needleAngle);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs">
+    <div className={`flex flex-col items-center justify-center ${compact ? "p-1 bg-transparent" : "p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs"}`}>
       <svg
         viewBox="0 0 300 175"
-        width="280"
-        height="165"
-        className="w-full max-w-[280px] h-auto overflow-visible"
+        width={compact ? "190" : "280"}
+        height={compact ? "110" : "165"}
+        className={`${compact ? "w-[190px] max-w-[190px]" : "w-full max-w-[280px]"} h-auto overflow-visible`}
       >
         {/* Track segments */}
         <path d={d1} fill="none" stroke="#FEE2E2" strokeWidth={strokeWidth} strokeLinecap="round" />
@@ -93,11 +95,11 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
         <circle cx={cx} cy={cy} r="2.5" fill="#7EBCE6" />
       </svg>
 
-      <div className="text-center mt-[-10px]">
-        <div className="text-3xl font-light text-[#1E252D] tracking-tight font-mono tabular-nums">
-          {clampedValue} <span className="text-sm font-normal text-slate-400 font-['Inter']">/ 100</span>
+      <div className={`text-center ${compact ? "mt-[-6px]" : "mt-[-10px]"}`}>
+        <div className={`${compact ? "text-lg font-bold" : "text-3xl font-light"} text-[#1E252D] tracking-tight font-mono tabular-nums leading-tight`}>
+          {clampedValue} <span className={`${compact ? "text-xs" : "text-sm"} font-normal text-slate-400 font-['Inter']`}>/ 100</span>
         </div>
-        <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500 mt-0.5 font-['Outfit']">
+        <div className={`${compact ? "text-[9px]" : "text-[11px]"} font-medium uppercase tracking-wider text-slate-500 mt-0.5 font-['Outfit']`}>
           {label}
         </div>
       </div>

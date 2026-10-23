@@ -75,29 +75,57 @@
 }
 
 /* Print and PDF Export Styles */
+@page {
+  size: A4 portrait;
+  margin: 6mm 8mm;
+}
+
 @media print {
-  body {
-    background-color: #FFFFFF !important;
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
     color: #1E252D !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    overflow: hidden !important;
   }
 
-  aside, nav, .print\:hidden {
+  aside, nav, .print\:hidden, .no-print {
     display: none !important;
   }
 
   main {
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .print\:p-0 {
     padding: 0 !important;
   }
 
-  .print\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 1rem !important;
+  /* Force single A4 page containment with zero overflow or page splitting */
+  .a4-print-page {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 284mm !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 }
 

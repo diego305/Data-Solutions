@@ -6,13 +6,15 @@ interface RadarChartProps {
   color?: string;
   fillColor?: string;
   size?: number;
+  compact?: boolean;
 }
 
 export const RadarChart: React.FC<RadarChartProps> = ({
   dimensiones,
   color = "#3B8AC4",
   fillColor = "rgba(59, 138, 196, 0.22)",
-  size = 320
+  size = 320,
+  compact = false
 }) => {
   const categories: (keyof DimensionScores)[] = [
     "Almacenamiento y Fuentes",
@@ -25,7 +27,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
   const totalAxes = categories.length;
   const cx = size / 2;
   const cy = size / 2;
-  const maxRadius = size / 2 - 52;
+  const maxRadius = compact ? size / 2 - 30 : size / 2 - 52;
 
   const getCoordinates = (index: number, value: number) => {
     const angle = (Math.PI * 2 * index) / totalAxes - Math.PI / 2;
@@ -47,8 +49,19 @@ export const RadarChart: React.FC<RadarChartProps> = ({
     .join(" ");
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs w-full overflow-hidden">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible max-w-full h-auto">
+    <div
+      className={`flex flex-col items-center justify-center ${
+        compact
+          ? "p-0 bg-transparent border-0 shadow-none"
+          : "p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs"
+      } w-full overflow-hidden`}
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="overflow-visible max-w-full h-auto"
+      >
         {/* Background concentric polygons */}
         {levels.map((level) => {
           const ringPoints = categories
@@ -63,16 +76,18 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 points={ringPoints}
                 fill="none"
                 stroke="#E4ECF2"
-                strokeWidth="1"
+                strokeWidth={compact ? "0.75" : "1"}
                 strokeDasharray={level === 100 ? undefined : "3,3"}
               />
-              <text
-                x={cx + 3}
-                y={cy - (level / 100) * maxRadius + 3}
-                className="text-[9px] font-mono tabular-nums fill-slate-400 font-medium"
-              >
-                {level}
-              </text>
+              {!compact && (
+                <text
+                  x={cx + 3}
+                  y={cy - (level / 100) * maxRadius + 3}
+                  className="text-[9px] font-mono tabular-nums fill-slate-400 font-medium"
+                >
+                  {level}
+                </text>
+              )}
             </g>
           );
         })}
@@ -88,7 +103,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
               x2={outer.x}
               y2={outer.y}
               stroke="#E4ECF2"
-              strokeWidth="1"
+              strokeWidth={compact ? "0.75" : "1"}
             />
           );
         })}
@@ -98,7 +113,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           points={points}
           fill={fillColor}
           stroke={color}
-          strokeWidth="2.5"
+          strokeWidth={compact ? "1.8" : "2.5"}
           className="transition-all duration-500 ease-out"
         />
 
@@ -108,7 +123,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           const { x, y } = getCoordinates(i, val);
 
           const angle = (Math.PI * 2 * i) / totalAxes - Math.PI / 2;
-          const labelDist = maxRadius + 22;
+          const labelDist = maxRadius + (compact ? 16 : 22);
           const labelX = cx + labelDist * Math.cos(angle);
           const labelY = cy + labelDist * Math.sin(angle);
 
@@ -124,28 +139,34 @@ export const RadarChart: React.FC<RadarChartProps> = ({
               <circle
                 cx={x}
                 cy={y}
-                r="4.5"
+                r={compact ? "3" : "4.5"}
                 fill={color}
                 stroke="#ffffff"
-                strokeWidth="1.5"
+                strokeWidth={compact ? "1" : "1.5"}
               />
               <text
                 x={labelX}
                 y={labelY}
                 textAnchor={textAnchor}
                 dominantBaseline="central"
-                className="text-[10px] font-medium fill-[#1E252D] pointer-events-none select-none font-['Outfit']"
+                className={`${
+                  compact ? "text-[7.5px]" : "text-[10px]"
+                } font-medium fill-[#1E252D] pointer-events-none select-none font-['Outfit']`}
               >
                 {cat.split(" ")[0]}{" "}
-                <tspan fill="#3B8AC4" className="font-mono tabular-nums font-semibold">({val}%)</tspan>
+                <tspan fill="#3B8AC4" className="font-mono tabular-nums font-semibold">
+                  ({val}%)
+                </tspan>
               </text>
             </g>
           );
         })}
       </svg>
-      <div className="text-[11px] text-slate-400 font-medium mt-1 font-['Inter']">
-        Escala de preparación por dimensión (0 a 100%)
-      </div>
+      {!compact && (
+        <div className="text-[11px] text-slate-400 font-medium mt-1 font-['Inter']">
+          Escala de preparación por dimensión (0 a 100%)
+        </div>
+      )}
     </div>
   );
 };
